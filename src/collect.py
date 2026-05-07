@@ -28,7 +28,7 @@ def run_collection():
         while collected < SAMPLES_PER_GESTURE:
             ret, frame = cap.read()
             if not ret: break
-
+            frame = cv2.flip(frame, 1) # mirror for easier collection into a intuitive form
             rgb    = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             result = hands.process(rgb)
 

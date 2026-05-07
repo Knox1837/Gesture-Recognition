@@ -1,5 +1,4 @@
-"""# MLP definition for gesture classification, using batch normalization and dropout for regularization"""
-
+"""MLP definition for gesture classification, using batch normalization and dropout for regularization"""
 import torch.nn as nn
 from config import INPUT_SIZE, HIDDEN_1, HIDDEN_2, NUM_CLASSES, DROPOUT
 

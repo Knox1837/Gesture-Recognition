@@ -2,7 +2,6 @@
 
 import pandas as pd, torch
 from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision import transforms
 from config import CSV_PATH, GESTURES, BATCH_SIZE
 import numpy as np
 

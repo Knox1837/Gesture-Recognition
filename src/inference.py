@@ -17,6 +17,7 @@ def run_inference():
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret: break
+        frame = cv2.flip(frame, 1) # mirror for more intuitive interaction
 
         result = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         label  = "No hand"
