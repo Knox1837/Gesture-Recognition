@@ -27,12 +27,12 @@ pip install -r requirements.txt
 
 ### Collect gesture data (once per gesture for 10 total gestures)
 ```
-python main.py --mode collect
+python main.py 
 ```
 When prompted, type one of the gesture names below and press Enter.
 Hold your hand in frame, press **SPACE** to start capturing, **Q** to quit early.
 
-Gestures: `palm` `fist` `thumb` `index` `ok` `l` `c` `down` `palm_moved` `fist_moved`
+Gestures: `Palm` `Fist` `Thumb` `Index` `Ok` `L` `C` `Down` `Palm_moved` `Fist_moved`
 
 ### Train
 ```
@@ -53,6 +53,17 @@ Press **Q** to quit.
 ---
 
 ## Notes
+The system uses Google mediapipe for hand detection(with 21 unique points) and evaluates it to get gesture info
 - Collect all 10 gestures before training
 - Checkpoints are saved to `checkpoints/best_model.pth`
 - Training curves and confusion matrix are saved to `logs/`
+
+### Inference Pipeline 
+1. Capture live webcam frames using OpenCV  
+2. Detect hand landmarks using MediaPipe Hands  
+3. Extract 21 hand keypoints from the detected hand  
+4. Normalize and preprocess landmark coordinates  
+5. Convert landmarks into a numerical feature vector  
+6. Pass the feature vector into the trained ML model  
+7. Predict gesture class and confidence score  
+8. Repeat continuously for real-time inference

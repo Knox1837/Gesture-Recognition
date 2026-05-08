@@ -12,11 +12,7 @@ from gui.theme import (
     FONT_MONO, FONT_MONO_SM,
     styled_btn, log_box, append_log, header, bordered_frame
 )
-
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 from config import EPOCHS, LR
-
 
 class TrainPanel:
     def __init__(self, parent, app):

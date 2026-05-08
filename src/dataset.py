@@ -7,7 +7,8 @@ import numpy as np
 
 class LandmarkDataset(Dataset):
     def __init__(self, csv_path):
-        df = pd.read_csv(csv_path)
+        column_names = ['label'] + [f'landmark_{i}' for i in range(63)] # 21 points * 3 (x,y,z)
+        df = pd.read_csv('data/landmarks/gestures.csv', names=column_names) #to read the csv file and convert it to a pandas dataframe
         self.labels  = df['label'].map({g: i for i, g in enumerate(GESTURES)}).values
         self.samples = df.drop(columns=['label']).values.astype('float32')
 

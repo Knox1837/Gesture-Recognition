@@ -14,8 +14,6 @@ from gui.theme import (
     styled_btn, log_box, header, bordered_frame
 )
 
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 from config import GESTURES
 
 

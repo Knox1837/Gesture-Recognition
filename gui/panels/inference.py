@@ -11,8 +11,6 @@ from gui.theme import (
     styled_btn, header, bordered_frame
 )
 
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 from config import GESTURES
 
 
@@ -68,7 +66,7 @@ class InferencePanel:
             self._conf_lbl.configure(text=str(e))
             return
 
-        self._mp_hands = mp.solutions.hands.Hands(
+        self._mp_hands = mp.solutions.hands.Hands( #uses pretrained model from mediapipe to detect hand and extract landmarks
             max_num_hands=1, min_detection_confidence=0.7)
         self._mp_draw  = mp.solutions.drawing_utils
 
@@ -116,7 +114,7 @@ class InferencePanel:
                     out  = self._model(torch.tensor(coords).unsqueeze(0))
                     idx  = out.argmax(dim=1).item()
                     conf = torch.softmax(out, dim=1).max().item()
-                    label    = GESTURES[idx]
+                    label    = GESTURES[idx].replace('_', ' ').title() # formatting label to title case for display
                     conf_txt = f'{conf:.0%}'
 
                 cv2.putText(frame_flip, f'{label} {conf_txt}', (10, 36),

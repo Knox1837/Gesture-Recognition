@@ -14,8 +14,6 @@ from gui.theme import (
     styled_btn, log_box, header, bordered_frame
 )
 
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 from config import GESTURES, CSV_PATH, SAMPLES_PER_GESTURE, CAPTURE_FPS
 
 
@@ -40,7 +38,7 @@ class CollectPanel:
         self._mp_draw  = mp.solutions.drawing_utils
 
     def build(self):
-        header(self.parent, '⊕  Collect',
+        header(self.parent, 'Collect',
                'Capture hand landmark samples for each gesture')
 
         content = tk.Frame(self.parent, bg=BG)
@@ -59,13 +57,17 @@ class CollectPanel:
         left.pack(side='left', fill='y', padx=(0, 16))
         left.pack_propagate(False)
 
+        self._display_to_internal = {g.replace('_', ' ').title(): g for g in GESTURES}
+        display_names = list(self._display_to_internal.keys())
+
         tk.Label(left, text='Gesture', bg=BG, fg=TEXT_DIM,
                  font=FONT_MONO_SM).pack(anchor='w')
 
-        self._gesture_var = tk.StringVar(value=GESTURES[0])
+        self._gesture_var = tk.StringVar(value=display_names[0])
         ttk.Combobox(
             left, textvariable=self._gesture_var,
-            values=GESTURES, state='readonly', width=22,
+            values=display_names, 
+            state='readonly', width=22,
             font=FONT_MONO
         ).pack(fill='x', pady=(2, 12))
 
@@ -85,7 +87,7 @@ class CollectPanel:
         ).pack(fill='x', pady=(0, 16))
 
         self._status_lbl = tk.Label(
-            left, text='● Ready', bg=BG, fg=TEXT_DIM, font=FONT_MONO
+            left, text='Ready', bg=BG, fg=TEXT_DIM, font=FONT_MONO
         )
         self._status_lbl.pack(anchor='w', pady=(0, 12))
 
@@ -124,12 +126,12 @@ class CollectPanel:
 
         ret, frame = self.app.cap.read() if self.app.cap else (False, None)
         if ret:
-            frame_flip = cv2.flip(frame, 1)
+            frame_flip = cv2.flip(frame, 1) # mirror for more intuitive collection into a intuitive form(like a mirror)
             rgb        = cv2.cvtColor(frame_flip, cv2.COLOR_BGR2RGB)
             result     = self._mp_hands.process(rgb)
 
             if result.multi_hand_landmarks:
-                lm = result.multi_hand_landmarks[0]
+                lm = result.multi_hand_landmarks[0] # lm is just the 21 (x, y, z) points for the detected hand without any gesture info, so it detects the hand but not its configuration/pose/gesture
                 self._mp_draw.draw_landmarks(
                     frame_flip, lm, mp.solutions.hands.HAND_CONNECTIONS)
                 if self._collecting:
@@ -155,7 +157,8 @@ class CollectPanel:
     # capture logic 
 
     def _start(self):
-        self._gesture_name   = self._gesture_var.get()
+        display_name = self._gesture_var.get()
+        self._gesture_name = self._display_to_internal[display_name]
         self._count          = 0
         self._last_capture_t = 0
         self._collecting     = True
@@ -172,7 +175,7 @@ class CollectPanel:
             ]
             self._collect_writer.writerow(header_row)
 
-        self._status_lbl.configure(text='● Capturing...', fg=ACCENT)
+        self._status_lbl.configure(text='* Capturing...', fg=ACCENT)
         self._start_btn.configure(state='disabled')
         self._stop_btn.configure(state='normal')
 
@@ -202,7 +205,7 @@ class CollectPanel:
         if self._collect_file:
             self._collect_file.close()
         self._status_lbl.configure(
-            text=f'✓ Done — {self._gesture_name}', fg=SUCCESS)
+            text=f'Done — {self._gesture_name}', fg=SUCCESS)
         self._start_btn.configure(state='normal')
         self._stop_btn.configure(state='disabled')
 
@@ -210,6 +213,6 @@ class CollectPanel:
         self._collecting = False
         if self._collect_file:
             self._collect_file.close()
-        self._status_lbl.configure(text='■ Stopped', fg=WARNING)
+        self._status_lbl.configure(text='Stopped', fg=WARNING)
         self._start_btn.configure(state='normal')
         self._stop_btn.configure(state='disabled')

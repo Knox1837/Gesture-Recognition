@@ -1,1 +1,1 @@
-from gui.app import GestureApp
+from gui.app import GestureApp # main app class that initializes the window and manages panels for direct import to main without needing to import each panel separately
